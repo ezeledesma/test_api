@@ -13,10 +13,8 @@ const requestListener = (req, res)=>{
 	endingMessage:"Visit Geeksforgeeks.org for more"
 	}
 
-	//const jsonContent = JSON.stringify(responseData);
-	//res.end(jsonContent);
-
-	res.end(responseData);
+	const jsonContent = JSON.stringify(responseData);
+	res.end(jsonContent);
 };
 
 const server = http.createServer(requestListener);
