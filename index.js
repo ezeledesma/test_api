@@ -44,7 +44,8 @@ http.createServer((request, response) => {
 			}
 		}
 		catch {
-			responseData = "No se recibieron datos"
+			//responseData = "No se recibieron datos"
+			responseData = buffer;
 		}
 		
 		response.writeHead(200, {'Content-Type': 'application/json'})
