@@ -1,4 +1,4 @@
-var buffer = {};
+var buffer = {dato:"vacio"};
 
 const http = require('node:http');
 
@@ -42,13 +42,23 @@ http.createServer((request, response) => {
 				responseData = "Tipo desconocido"
 				break;
 			}
+			//console.log("Se envian los datos");
 		}
 		catch {
 			//responseData = "No se recibieron datos"
 			responseData = buffer;
+			//console.log("No se recibieron datos");
 		}
 		
-		response.writeHead(200, {'Content-Type': 'application/json'})
+		response.setHeader('Access-Control-Allow-Origin', '*');
+		//response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+		response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+		// Set to true if you need the website to include cookies in the requests sent
+		// to the API (e.g. in case you use sessions)
+		//response.setHeader('Access-Control-Allow-Credentials', true);
+
+
+		response.writeHead(200, {'Content-Type': 'application/json'});
 		response.end(JSON.stringify(responseData));
 		// END OF NEW STUFF
 
