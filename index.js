@@ -1,29 +1,76 @@
-var contador = 0;
+var buffer = {};
 
-const http = require('http');
+const http = require('node:http');
 
-const requestListener = (req, res)=>{
-	console.log("Request is Incoming");
+http.createServer((request, response) => {
+
+	let reqJson;
+	let body = [];
+	let responseData;
 	
-	contador++;
+	request
+	.on('error', err => {
+		console.error(err);
+	})
+	.on('data', chunk => {
+			body.push(chunk);
+	})
+	.on('end', () => {
+		
+		body = Buffer.concat(body).toString();
+		
+		// BEGINNING OF NEW STUFF
+		response
+		.on('error', err => {
+			console.error(err);
+		});
 
-	const responseData = {
-		message:"Hello, GFG Learner",
-		articleData:{
-		articleName: "How to send JSON response from NodeJS",
-		category:"NodeJS",
-		status: "published",
-		contador: contador
-	},
-	endingMessage:"Visit Geeksforgeeks.org for more"
-	}
+		try {
+			reqJson = JSON.parse(body);
 
-	const jsonContent = JSON.stringify(responseData);
-	res.end(jsonContent);
-};
+			switch (reqJson.tipo) {
+				case 'write':
+				buffer = reqJson.data;
+				responseData = "Datos guardados correctamente"
+				break;
 
-const server = http.createServer(requestListener);
+				case 'read':
+				responseData = buffer;
+				break;
 
-server.listen(3000,'localhost', function(){
-	console.log("Server is Listening at Port 3000!");
-});
+				default:
+				responseData = "Tipo desconocido"
+				break;
+			}
+		}
+		catch {
+			responseData = "No se recibieron datos"
+		}
+		
+		response.writeHead(200, {'Content-Type': 'application/json'})
+		response.end(JSON.stringify(responseData));
+		// END OF NEW STUFF
+
+	});
+}).listen(8080);
+
+/* express-session (Session persist)
+
+var session = require('express-session');
+var app = express();
+app.use(session({secret: 'ssshhhhh'}));
+
+app.get('/',function(req,res){
+req.session = myData;
+}
+
+*/
+
+/* node-persist (global persist)
+
+var storage = require('node-persist');
+storage.initSync();
+storage.setItem('myPersistentData', { ... });
+console.log(storage.getItem('myPersistentData'));
+
+*/
